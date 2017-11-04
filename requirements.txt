@@ -1,10 +1,8 @@
 bson
-PIL
 Flask
 PyMongo
 arrow
 awsebcli
 requests
-shutil
 Pillow
 nose
