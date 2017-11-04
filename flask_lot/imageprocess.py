@@ -97,7 +97,8 @@ def _write_img_as_alpr(img):
         img: jpg image path
     """
     image = Image.open(img)
-    image.save("alpr.jpg")
+    temp = image.copy()
+    temp.save("alpr.jpg")
 
 
 def _get_plate_number():
