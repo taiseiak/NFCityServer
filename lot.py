@@ -29,7 +29,7 @@ def update_card():
     """Adds the card information to the document"""
     data = request.form
     card = data["card"]
-    spot = int(data["spot"])
+    spot = data["spot"]
     success = update_document_card(card, spots[spot])
     result = {"success": success}
     return flask.jsonify(result=result)
@@ -53,9 +53,9 @@ def get_licence():
 def update_lot():
     """Updates the cost of the lot in the database"""
     data = request.form
-    exists = data["exists"]
+    exists = bool(data["exists"])
     spot = data["spot"]
-    update_document(spots[spot])
+    cost = update_document(spots[spot])
     if not exists:
         cost = close_transaction(spots[spot])
         del spots[spot]
