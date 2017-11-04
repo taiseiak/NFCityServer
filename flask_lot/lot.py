@@ -5,7 +5,7 @@ This server will also do any image processing.
 
 import flask
 from flask import request
-from database import add_to_database, update_database, close_database
+from database import add_to_database, update_database
 from imageprocess import check_car
 
 # Globals
@@ -42,3 +42,6 @@ def check_lot():
         result = {"cost": cost,
                   "final": True}
     return flask.jsonify(result=result)
+
+if __name__ == "__main__":
+    app.run()

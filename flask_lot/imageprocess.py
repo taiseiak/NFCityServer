@@ -20,7 +20,6 @@ TEMP_IMAGE = "./Test-plate.jpg"
 
 
 class PlateReader:
-
     def __init__(self):
         # alpr subprocess args
         alpr_command = "alpr -c eu -t hr -n 300 -j alpr.jpg"
@@ -32,10 +31,10 @@ class PlateReader:
     def alpr_json_results(self):
         alpr_out, alpr_error = self.alpr_subprocess().communicate()
 
-        if not alpr_error is None:
+        if alpr_error is not None:
             return None, alpr_error
-        elif "No license plates found." in alpr_out:
-            return None, None
+        # elif "No license plates found." in alpr_out:
+        #     return None, None
 
         try:
             return json.loads(alpr_out), None
@@ -45,13 +44,14 @@ class PlateReader:
     def read_plate(self):
         alpr_json, alpr_error = self.alpr_json_results()
 
-        if not alpr_error is None:
+        if alpr_error is not None:
             return ""
 
         if alpr_json is None:
             return ""
 
         results = alpr_json["results"]
+        print("got to here")
 
         for result in results:
             candidates = result["candidates"]
