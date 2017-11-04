@@ -53,6 +53,7 @@ def get_licence():
 def update_lot():
     """Updates the cost of the lot in the database"""
     data = request.form
+    print(spots)
     exists = bool(data["exists"])
     spot = data["spot"]
     cost = update_document(spots[spot])
