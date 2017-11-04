@@ -9,7 +9,7 @@ from database import update_document_card, update_document,\
     create_document, close_transaction
 
 # Globals
-app = flask.Flask(__name__)
+application = flask.Flask(__name__)
 
 spots = {
     1: "",
@@ -18,13 +18,13 @@ spots = {
 
 
 # Dummy url routing
-@app.route("/")
+@application.route("/")
 def hello():
     return "Hello, World!"
 
 
 # Main API routing
-@app.route("/send_card", methods=["POST"])
+@application.route("/send_card", methods=["POST"])
 def update_card():
     """Adds the card information to the document"""
     data = request.form
@@ -35,7 +35,7 @@ def update_card():
     return flask.jsonify(result=result)
 
 
-@app.route("/send_license", methods=["POST"])
+@application.route("/send_license", methods=["POST"])
 def get_licence():
     """Gets the license plate information from the PI and processes it"""
     data = request.form
@@ -49,7 +49,7 @@ def get_licence():
     return flask.jsonify(result=result)
 
 
-@app.route("/update_lot", methods=["POST"])
+@application.route("/update_lot", methods=["POST"])
 def update_lot():
     """Updates the cost of the lot in the database"""
     data = request.form
@@ -63,4 +63,4 @@ def update_lot():
 
 
 if __name__ == "__main__":
-    app.run()
+    application.run()
