@@ -24,7 +24,7 @@ def hello():
 
 
 # Main API routing
-@app.route("/send_card", request=["POST"])
+@app.route("/send_card", methods=["POST"])
 def update_card():
     """Adds the card information to the document"""
     data = request.form
@@ -35,7 +35,7 @@ def update_card():
     return flask.jsonify(result=result)
 
 
-@app.route("/send_license", request=["POST"])
+@app.route("/send_license", methods=["POST"])
 def get_licence():
     """Gets the license plate information from the PI and processes it"""
     data = request.form
@@ -49,7 +49,7 @@ def get_licence():
     return flask.jsonify(result=result)
 
 
-@app.route("/update_lot", request=["POST"])
+@app.route("/update_lot", methods=["POST"])
 def update_lot():
     """Updates the cost of the lot in the database"""
     data = request.form
