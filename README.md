@@ -44,7 +44,7 @@ http://NFCityServer.com/start_lot
 Then the server will send back a JSON file formatted as:
 
 { start: True or False (boolean)
-  transaction: number (int) }
+  transaction: id (string) }
 
 If start is true, then that means that the server started to log that parking
 lot and started calculating costs. It will send back a special ID number
@@ -54,7 +54,8 @@ number.
 Once the transaction has started, the NFC pole should send this request about
 every 30 seconds with this encoding of JSON:
 
-{ transaction: number (int) }
+{ transaction: id (string)
+  lot: lot number (int) }
 
 to this url (GET request please):
 
