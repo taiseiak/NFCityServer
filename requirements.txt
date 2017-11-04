@@ -4,5 +4,3 @@ PyMongo
 arrow
 awsebcli
 requests
-Pillow
-nose

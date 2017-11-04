@@ -10,17 +10,16 @@ dbclient = pymongo.MongoClient(MONGO_CLIENT_URL)
 database = dbclient.nfcity
 collection = database.parking_lot_one
 
-DOLLARS_PER_HOUR = 1.5
+DOLLARS_PER_HOUR = float(120)
 
 
-def add_to_database(card, lot, license_plate):
+def create_document(license_plate, lot):
     """Adds a new entry to the database
 
     The information added is the card, the lot, the license plate number,
     and the time that this information was added into the database.
 
     Args:
-        card: card information, for now a string
         lot: int, specifying what lot
         license_plate: license plate number
 
@@ -29,16 +28,17 @@ def add_to_database(card, lot, license_plate):
         transaction.
     """
     time = arrow.now()
-    entry = {"card": card,
+    entry = {"card": "UNDEFINED",
              "lot": lot,
              "license_plate": license_plate,
              "time": time.isoformat(),
-             "cost": 0}
+             "cost": 0,
+             "softheon": "UNDEFINED"}
     transaction = collection.insert_one(entry).inserted_id
     return str(transaction)
 
 
-def update_database(transaction):
+def update_document(transaction):
     """Update the document
 
     Updates the document for that specific transaction.
@@ -57,3 +57,32 @@ def update_database(transaction):
     collection.update_one({"_id": transaction},
                           {"$set": {"cost": cost}})
     return cost
+
+def update_document_card(card, transaction):
+    """Updates the card information for the parking spot
+
+    Args:
+        card: string with card information
+        transaction: unique id string
+
+    Returns:
+        True if successful else False
+    """
+    tr = bson.objectid.ObjectId(transaction)
+    try:
+        collection.update_one({"_id": tr}, {"$set": {"card": card}})
+    except ValueError:
+        return False
+    return True
+
+
+
+def close_transaction(transaction):
+    """Close the transaction, sending a request to softheon
+
+    Args:
+        transaction: unique id string
+    """
+    tr = bson.objectid.ObjectId(transaction)
+    entry = collection.find_one({"_id": tr})
+    return True
