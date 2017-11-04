@@ -12,8 +12,8 @@ from database import update_document_card, update_document,\
 application = flask.Flask(__name__)
 
 spots = {
-    1: "",
-    2: ""
+    "1": "",
+    "2": ""
 }
 
 
