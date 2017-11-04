@@ -27,7 +27,7 @@ def update_card():
     return flask.jsonify(result=result)
 
 
-@app.route("/send_licence")
+@app.route("/send_license")
 def get_licence():
     """Gets the license plate information from the PI and processes it"""
     data = request.form
