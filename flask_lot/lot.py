@@ -41,7 +41,7 @@ def get_licence():
     return flask.jsonify(result=result)
 
 
-@app.route("update_lot")
+@app.route("/update_lot")
 def update_lot():
     """Updates the cost of the lot in the database"""
     data = request.form
