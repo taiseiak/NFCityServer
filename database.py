@@ -56,7 +56,7 @@ def update_document(transaction):
     begin_time = arrow.get(entry["time"])
     hours = (begin_time - arrow.now()).seconds / 3600
     cost = format(float(hours * DOLLARS_PER_HOUR), ".2f")
-    transaction_cl.update_one({"_id": transaction},
+    transaction_cl.update_one({"_id": tr},
                               {"$set": {"cost": cost}})
     return cost
 
