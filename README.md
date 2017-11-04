@@ -27,3 +27,13 @@ Mlab, so it will be a MongoDB database.
 
 ## Starting a lot
 
+There will be a POST request from the Docker that holds the information
+of the license plate info. They will send over what spot and what the number
+is. This will store the lot to a transaction in an internal dictionary.
+
+When there is a request from the NFC reader, the frequency of the user to
+that spot, and the card info will be updated for the transaction.
+
+There will be information every 30 seconds from the PI on if the
+car exists there or not. Once the car goes away, the server will do transactions
+with the softheon api.

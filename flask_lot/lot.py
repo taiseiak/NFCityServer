@@ -12,7 +12,8 @@ from database import update_document_card, update_document,\
 app = flask.Flask(__name__)
 
 spots = {
-    1: ""
+    1: "",
+    2: ""
 }
 
 
@@ -23,17 +24,18 @@ def hello():
 
 
 # Main API routing
-@app.route("/send_card")
+@app.route("/send_card", request=["POST"])
 def update_card():
     """Adds the card information to the document"""
-    card = request.args.get("card", type=str)
-    lot = request.args.get("lot", type=int)
-    success = update_document_card(card, spots[lot])
+    data = request.form
+    card = data["card"]
+    spot = int(data["spot"])
+    success = update_document_card(card, spots[spot])
     result = {"success": success}
     return flask.jsonify(result=result)
 
 
-@app.route("/send_license")
+@app.route("/send_license", request=["POST"])
 def get_licence():
     """Gets the license plate information from the PI and processes it"""
     data = request.form
@@ -47,7 +49,7 @@ def get_licence():
     return flask.jsonify(result=result)
 
 
-@app.route("/update_lot")
+@app.route("/update_lot", request=["POST"])
 def update_lot():
     """Updates the cost of the lot in the database"""
     data = request.form
@@ -56,6 +58,7 @@ def update_lot():
     update_document(spots[spot])
     if not exists:
         cost = close_transaction(spots[spot])
+        del spots[spot]
     return flask.jsonify(result={"cost": cost})
 
 
