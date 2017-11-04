@@ -3,6 +3,7 @@ Library that writes information into the database.
 """
 import pymongo
 import arrow
+import bson
 
 MONGO_CLIENT_URL = "mongodb://lot_one:hackGSU@ds147265.mlab.com:47265/nfcity"
 dbclient = pymongo.MongoClient(MONGO_CLIENT_URL)
@@ -48,10 +49,11 @@ def update_database(transaction):
     Returns:
         the amount that transaction currently costs in a float format
     """
-    entry = collection.find_one({"_id": transaction})
+    tr = bson.objectid.ObjectId(transaction)
+    entry = collection.find_one({"_id": tr})
     begin_time = arrow.get(entry["time"])
-    hours = (begin_time - arrow.now()).hour
-    cost = float(hours * DOLLARS_PER_HOUR)
+    hours = (begin_time - arrow.now()).seconds / 3600
+    cost = format(float(hours * DOLLARS_PER_HOUR), ".2f")
     collection.update_one({"_id": transaction},
-                          {"cost": cost})
+                          {"$set": {"cost": cost}})
     return cost

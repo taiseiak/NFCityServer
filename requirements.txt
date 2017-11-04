@@ -1,3 +1,4 @@
+bson
 PIL
 Flask
 PyMongo
