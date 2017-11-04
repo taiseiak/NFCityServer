@@ -76,7 +76,6 @@ def update_document_card(card, transaction):
     return True
 
 
-
 def close_transaction(transaction):
     """Close the transaction, sending a request to softheon
 
