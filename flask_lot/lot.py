@@ -16,6 +16,12 @@ spots = {
 }
 
 
+# Dummy url routing
+@app.route("/")
+def hello():
+    return "Hello, World!"
+
+
 # Main API routing
 @app.route("/send_card")
 def update_card():
@@ -31,7 +37,7 @@ def update_card():
 def get_licence():
     """Gets the license plate information from the PI and processes it"""
     data = request.form
-    license_plate = data["plate"]
+    license_plate = data["platenumber"]
     spot = data["spot"]
     if license_plate:
         spots[spot] = create_document(license_plate, spot)
