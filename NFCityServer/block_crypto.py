@@ -25,9 +25,7 @@ class AESCipher:
 
     def __init__(self, key):
         # self.key = md5(key.encode('utf8')).hexdigest()
-        #self.key = md5(key).hexdigest()
-        ##hacky solution
-        self.key = 'hackathongsu2017'
+        self.key = md5(key).hexdigest()
 
     def encrypt(self, raw):
         raw = pad(raw)
@@ -48,15 +46,29 @@ def decrypt_json(hashvalue, ciphertext, machine):
     Returns:
         dictionary with json
     """
-    return AESCipher('password').decrypt(ciphertext)
+    machines = {'pi': 'hashfilepi',
+                'dragon': 'hashfiledragon'}
+    seedfile = machines[machine]
+    with open(seedfile) as seedfile_in:
+        seed = seedfile_in.read()
+    string = ciphertext + "||" + seed
+    check_hash = md5(string).hexdigest()
+    if check_hash != hashvalue:
+        return False
+    hashk = SHA256.new()
+    hashk.update(seed)
+    hashkey = hashk.digest()
+    print(AESCipher(hashkey).decrypt(ciphertext))
+    return AESCipher(hashkey).decrypt(ciphertext)
 
 
 def main():
+    hashfile, machine = sys.argv[1], sys.argv[2]
     with open('hashjson', 'r') as infile:
         data = json.load(infile)
     ciphertext = data["ciphertext"]
     hashvalue = data["hashvalue"]
-    return_json = decrypt_json(hashvalue, ciphertext, 'pi')
+    return_json = decrypt_json(hashvalue, ciphertext, machine)
     open('hashjson', 'w').close()
     return return_json
 
