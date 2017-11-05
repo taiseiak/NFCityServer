@@ -4,3 +4,4 @@ PyMongo
 arrow
 awsebcli
 requests
+pycrypto

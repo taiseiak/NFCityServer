@@ -5,16 +5,16 @@ This server will also do any image processing.
 
 import flask
 from flask import request
-from database import update_document_card, update_document,\
+from database import update_document_card,\
     create_document, close_transaction
+from block_crypto import decrypt_json
+
+key = 'a4337bc45a8fc544c03f52dc550cd6e1e87021bc896588bd79e901e2df2j'
 
 # Globals
 application = flask.Flask(__name__)
 
-spots = {
-    "1": "",
-    "2": ""
-}
+spots = {}
 
 
 # Dummy url routing
@@ -28,10 +28,19 @@ def hello():
 def update_card():
     """Adds the card information to the document"""
     data = request.form
-    card = data["card"]
-    spot = data["spot"]
-    success = update_document_card(card, spots[spot])
-    result = {"success": success}
+    ciphertext = data["ciphertext"]
+    hashvalue = data["hashvalue"]
+    try:
+        json = decrypt_json(ciphertext, hashvalue, 'dragon')
+        card = json["card"]
+        spot = json["spot"]
+        transaction = spots[spot]
+        spots[spot] = update_document_card(card, transaction)
+        result = {"success": True}
+    except KeyError:
+        result = {"success": False}
+    except ValueError:
+        result = {"success": False}
     return flask.jsonify(result=result)
 
 
@@ -39,28 +48,34 @@ def update_card():
 def get_licence():
     """Gets the license plate information from the PI and processes it"""
     data = request.form
-    license_plate = data["platenumber"]
-    spot = data["spot"]
-    if license_plate:
+    ciphertext = data["ciphertext"]
+    hashvalue = data["hashvalue"]
+    try:
+        json = decrypt_json(ciphertext, hashvalue, 'pi')
+        license_plate = json["platenumber"]
+        spot = json["spot"]
         spots[spot] = create_document(license_plate, spot)
         result = {"success": True}
-    else:
+    except ValueError:
         result = {"success": False}
     return flask.jsonify(result=result)
 
 
-@application.route("/update_lot", methods=["POST"])
+@application.route("/end_transaction", methods=["POST"])
 def update_lot():
     """Updates the cost of the lot in the database"""
     data = request.form
-    print(spots)
-    exists = bool(data["exists"])
-    spot = data["spot"]
-    cost = update_document(spots[spot])
-    if not exists:
-        cost = close_transaction(spots[spot])
-        del spots[spot]
-    return flask.jsonify(result={"cost": cost})
+    ciphertext = data["ciphertext"]
+    hashvalue = data["hashvalue"]
+    try:
+        json = decrypt_json(ciphertext, hashvalue, 'pi')
+        spot = json["spot"]
+        transaction = spots[spot]
+        spots[spot] = close_transaction(transaction)
+        result = {"success": True}
+    except ValueError:
+        result = {"success": False}
+    return flask.jsonify(result=result)
 
 
 if __name__ == "__main__":
