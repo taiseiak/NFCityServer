@@ -48,7 +48,7 @@ def decrypt_json(hashvalue, ciphertext, machine):
     Returns:
         dictionary with json
     """
-    return AESCipher('password').decrypt(ciphertext)
+    return AESCipher('hackathongsu2017').decrypt(ciphertext)
 
 
 def main():
