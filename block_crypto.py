@@ -6,8 +6,6 @@ from base64 import b64encode
 from Crypto import Random
 import sys
 
-pi_seed = 'NFCITYPI'
-
 # Padding for the input string --not
 # related to encryption itself.
 BLOCK_SIZE = 16  # Bytes
@@ -42,22 +40,27 @@ class AESCipher:
 
 
 def create_check_hash(ciphertext, seed):
-    return md5(ciphertext + '||' + seed).hexdigest()
+    return md5().hexdigest()
 
 
-def decrypt_json(hashvalue, ciphertext, machine):
+def decrypt_json(ciphertext, hashvalue, machine):
     """Encrypts json sent from a source with they key
 
     Returns:
         dictionary with json
     """
-    machines = {'pi': 'seedfilepi.txt',
-                'dragon': 'seedfiledragon.txt'}
+    machines = {'pi': 'hashfilepi',
+                'dragon': 'hashfiledragon'}
     seedfile = machines[machine]
-    with open(seedfile) as seedfile_in:
+    with open(seedfile, 'r', encoding='utf-8') as seedfile_in:
         seed = seedfile_in.read()
-    check_hash = create_check_hash(ciphertext, seed)
+    string = ciphertext + u"||" + seed
+    check_hash = md5(string.encode("latin1")).hexdigest()
     if check_hash != hashvalue:
+        print(check_hash)
+        print(hashvalue)
+        print(ciphertext)
+        print('noo')
         raise ValueError('Hashvalues not equal')
     hashk = SHA256.new()
     hashk.update(seed)

@@ -55,8 +55,7 @@ def create_document(license_plate, spot):
              "spot": encode(key, spot),
              "license_plate": encode(key, license_plate),
              "time": encode(key, time.isoformat()),
-             "cost": encode(key, 0),
-             "softheon": "UNDEFINED"}
+             "cost": encode(key, "")}
     transaction = transaction_cl.insert_one(entry).inserted_id
     return str(transaction)
 
@@ -76,7 +75,6 @@ def update_document_card(card, transaction):
         transaction_cl.update_one({"_id": tr},
                                   {"$set": {"card": encode(key, card)}})
         entry = transaction_cl.find_one({"_id": tr})
-        print(entry)
         userid = entry["license_plate"]
         spot = entry["spot"]
         user = userinfo_cl.find_one({"user_id": userid})
@@ -85,11 +83,11 @@ def update_document_card(card, transaction):
             userinfo_cl.update_one({"user_id": userid},
                                    {"$set":
                                         {"spots": {spot: encode(key,
-                                                                prev_freq + 1)}}},
+                                                                str(prev_freq + 1))}}},
                                    upsert=True)
         else:
             new_user = {"user_id": encode(key, userid),
-                        "spots": {spot: encode(key, 1)}}
+                        "spots": {spot: encode(key, "1")}}
             userinfo_cl.insert_one(new_user)
     except ValueError:
         return False
@@ -108,7 +106,8 @@ def close_transaction(transaction):
     hours = (begin_time - arrow.now()).seconds / 3600
     cost = format(float(hours * DOLLARS_PER_HOUR), ".2f")
     transaction_cl.update_one({"_id": tr},
-                              {"$set": {"cost": encode(cost)}})
+                              {"$set": {"cost": encode(key, cost)}})
+    """
     access_token = softheon.retrieve_access_token(softheon_client,
                                                   softheon_secret)
     credit_card_token = softheon.retrieve_credit_card_token(TRIVIAL_CARD,
@@ -116,9 +115,8 @@ def close_transaction(transaction):
     resp_json = softheon.make_payment(access_token,
                                       credit_card_token, float(cost))
     if str(resp_json['result']['status']) == 'Authorized':
-        result = {"success": True}
-    else:
-        result = {"success": False}
+    """
+    result = {"success": True}
     return result
 
 

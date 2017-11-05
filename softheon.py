@@ -40,12 +40,12 @@ def retrieve_access_token(client_id, client_secret):
     # The token request end point
 
     # The authorization token - a base 64 encoding of 'client_id:client_secret'
-    auth_token = base64.standard_b64encode(client_id + ':' + client_secret)
+    auth_token = base64.standard_b64encode((client_id + ':' + client_secret).encode('ascii'))
 
     # declare request headers
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + auth_token
+        'Authorization': 'Basic ' + str(auth_token)
     }
 
     # declare request body
@@ -59,6 +59,7 @@ def retrieve_access_token(client_id, client_secret):
 
     # load the response text as json
     resp_json = json.loads(req.text)
+    print(resp_json)
 
     return resp_json['access_token']
 
