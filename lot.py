@@ -59,7 +59,7 @@ def get_licence():
         ret_json = json.loads(ret_json)
         print(ret_json)
         license_plate = ret_json["platenumber"]
-        spot = ret_json["spot"]
+        spot = str(ret_json["spot"])
         spots[spot] = create_document(license_plate, spot)
         result = {"success": True}
     except ValueError:
@@ -74,8 +74,9 @@ def update_lot():
     ciphertext = data["ciphertext"]
     hashvalue = data["hashvalue"]
     try:
-        json = decrypt_json(ciphertext, hashvalue, 'pi')
-        spot = json["spot"]
+        ret_json = decrypt_json(ciphertext, hashvalue, 'pi')
+        ret_json = json.loads(ret_json)
+        spot = str(ret_json["spot"])
         transaction = spots[spot]
         spots[spot] = close_transaction(transaction)
         result = {"success": True}
